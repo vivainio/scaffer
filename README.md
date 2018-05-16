@@ -1,6 +1,14 @@
 # Scaffer
 
-Create stuff like index.ts files (barrels), add mit license, setup.py, gitignore
+Create stuff like index.ts files (barrels), add mit license, setup.py, gitignore.
+
+Unlike many other scaffolding tools, this one:
+
+- Is not implemented in Node
+- Creates files in your current directory, not "new project under separate directory".
+- Has nontrivial commands. E.g. "scaffer barrel" command adds index.ts with export-throughs for all .ts files in current directory.
+
+It's the missing 
 
 # Insallation
 
