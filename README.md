@@ -29,6 +29,8 @@ Must specify language! (--net, --python)
 
 Future plans: discover and emit cookiecutter templates, do usual repetitive stuff.
 
+The templates used are in https://github.com/vivainio/scaffer-templates
+
 # License
 
 MIT.
