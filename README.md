@@ -8,7 +8,7 @@ Unlike many other scaffolding tools, this one:
 - Creates files in your current directory, not "new project under separate directory".
 - Has nontrivial commands. E.g. "scaffer barrel" command adds index.ts with export-throughs for all .ts files in current directory.
 
-It's the missing 
+It's the missing "dotnet new gitignore"!
 
 # Insallation
 
