@@ -46,6 +46,10 @@ def do_mit(arg):
     """ create MIT license in project """
     fetch_template_to("LICENSE", "MIT_LICENSE")
 
+def do_setuppy(arg):
+    """ Create setup.py """
+    fetch_template_to("setup.py", "setup_py.py")
+
 
 def main():
     args.init()
@@ -54,6 +58,7 @@ def main():
     gi = args.sub("gitignore", do_gitignore)
     gi.arg("--net", action="store_true")
     gi.arg("--python", action="store_true")
+    args.sub("setup", do_setuppy)
     args.parse()
 
 if __name__ == "__main__":
