@@ -82,7 +82,11 @@ def get_key_from_json(fname, key):
     return c.get(key)
 
 def find_templates():
-    files = discover_files_in_parents(['package.json', 'scaffer.json'], os.getcwd())
+    files = list(discover_files_in_parents(['package.json', 'scaffer.json'], os.getcwd()))
+    home_rc = os.path.expanduser("~/.scaffer/scaffer.json")
+    if os.path.isfile(home_rc):
+        files.append(home_rc)
+
     for f in files:
         dirs = get_key_from_json(f, "scaffer")
         if not dirs:
@@ -95,7 +99,6 @@ def find_templates():
 
 def do_gen(arg):
     """ Generate complex template """
-    print(arg)
     tgt_dir = os.getcwd()
 
     ts = find_templates()
@@ -115,7 +118,7 @@ def do_gen(arg):
         vars = emitter.discover_variables(all_content)
         unknown_prefilled = set(prefilled_vars.keys()).difference(vars)
         if unknown_prefilled:
-            print("Warning! Unknown variables on command line: ", ", ".join(unknown_prefilled))
+            print("Warning! Unknown variables on command line:", ", ".join(unknown_prefilled))
 
         to_fill = vars.difference(set(prefilled_vars.keys()))
 
@@ -137,7 +140,7 @@ def main():
     gi.arg("--python", action="store_true")
     argp.sub("setup", do_setuppy)
     gen = argp.sub("gen", do_gen, help="Generate from complex template")
-    gen.arg('-v', help="Give value to variable", nargs="+")
+    gen.arg('-v', help="Give value to variable", nargs="+", default=[])
     gen.arg("template", help="Template to generate", nargs="?")
     argp.parse()
 
