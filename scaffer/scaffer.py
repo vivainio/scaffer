@@ -86,7 +86,6 @@ def find_templates():
             for t in templates:
                 yield (t, os.path.join(rdir,d,t))
 
-
 def do_gen(arg):
     """ Generate complex template """
     ts = find_templates()
@@ -96,16 +95,15 @@ def do_gen(arg):
     to_gen = (t for t in ts if t[0] in arg.template)
 
     for template in to_gen:
-        content = list(emitter.files_with_content(template[1]))
-
+        os.chdir(template[1])
+        content = list(emitter.files_with_content("."))
         all_content = "".join(t[1] for t in content)
-        print(list(content))
-        print(all_content)
 
         vars = emitter.discover_variables(all_content)
         filled = emitter.fill_variables(vars)
-
-        print(filled)
+        renderings = emitter.var_renderings(filled)
+        new_cont = emitter.rendered_content(content, renderings)
+        print(new_cont)
 
 def main():
     argp.init()
