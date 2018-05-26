@@ -1,6 +1,6 @@
 from __future__ import print_function
 import os
-import args
+import argp
 import glob
 import urllib
 
@@ -52,14 +52,14 @@ def do_setuppy(arg):
 
 
 def main():
-    args.init()
-    args.sub("barrel", do_barrel)
-    args.sub("mit", do_mit)
-    gi = args.sub("gitignore", do_gitignore)
+    argp.init()
+    argp.sub("barrel", do_barrel)
+    argp.sub("mit", do_mit)
+    gi = argp.sub("gitignore", do_gitignore)
     gi.arg("--net", action="store_true")
     gi.arg("--python", action="store_true")
-    args.sub("setup", do_setuppy)
-    args.parse()
+    argp.sub("setup", do_setuppy)
+    argp.parse()
 
 if __name__ == "__main__":
     main()
