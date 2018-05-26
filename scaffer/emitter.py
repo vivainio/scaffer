@@ -32,10 +32,10 @@ def rendered_content(template, replacements):
         (apply_replacements(fname, replacements), apply_replacements(content, replacements)) for (fname, content) in template
     ]
 
-def fill_variables(vars):
+def prompt_variables(vars):
     d = {}
     print("Will need variables:", ", ".join(vars))
-    print("Use snake-case! E.g. if you want MyClass, enter my-class.")
+    print("Use snake-case. E.g. if you want MyClass, enter 'my-class'.")
     for v in vars:
         val = raw_input("%s: " % v)
         d[v] = val.strip()
@@ -46,7 +46,7 @@ def var_renderings(d):
     return list(itertools.chain(*[get_renderings(k,v) for (k,v) in d.items()]))
 
 def files_with_content(rootdir):
-    """ (fname, content)[] """
+    """ -> (fname, content)[] """
     for dirpath, _, fnames in os.walk(rootdir):
         for f in fnames:
             dp = os.path.join(dirpath, f)

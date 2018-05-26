@@ -95,7 +95,7 @@ def find_templates():
 
 def do_gen(arg):
     """ Generate complex template """
-
+    print(arg)
     tgt_dir = os.getcwd()
 
     ts = find_templates()
@@ -109,8 +109,19 @@ def do_gen(arg):
         content = list(emitter.files_with_content("."))
         all_content = "".join(t[1] for t in content)
 
+        prefilled_vars = {
+            k:v for (k,v) in (a.split("=", 1) for a in arg.v)
+        }
         vars = emitter.discover_variables(all_content)
-        filled = emitter.fill_variables(vars)
+        unknown_prefilled = set(prefilled_vars.keys()).difference(vars)
+        if unknown_prefilled:
+            print("Warning! Unknown variables on command line: ", ", ".join(unknown_prefilled))
+
+        to_fill = vars.difference(set(prefilled_vars.keys()))
+
+        filled = emitter.prompt_variables(to_fill)
+        filled.update(prefilled_vars)
+
         renderings = emitter.var_renderings(filled)
         new_cont = emitter.rendered_content(content, renderings)
         for fname, content in new_cont:
@@ -126,7 +137,7 @@ def main():
     gi.arg("--python", action="store_true")
     argp.sub("setup", do_setuppy)
     gen = argp.sub("gen", do_gen, help="Generate from complex template")
-    gen.arg('-v', help="Give value to variable")
+    gen.arg('-v', help="Give value to variable", nargs="+")
     gen.arg("template", help="Template to generate", nargs="?")
     argp.parse()
 
