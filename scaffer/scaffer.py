@@ -6,6 +6,7 @@ import urllib
 import json
 import pprint
 import itertools
+import emitter
 
 TEMPLATE_ROOT = "https://raw.githubusercontent.com/vivainio/scaffer-templates/master/templates/%s"
 GITIGNORE = "https://raw.githubusercontent.com/github/gitignore/master/%s.gitignore"
@@ -93,7 +94,19 @@ def do_gen(arg):
         pprint.pprint(list(ts))
         return
     to_gen = (t for t in ts if t[0] in arg.template)
-    print(list(to_gen))
+
+    for template in to_gen:
+        content = list(emitter.files_with_content(template[1]))
+
+        all_content = "".join(t[1] for t in content)
+        print(list(content))
+        print(all_content)
+
+        vars = emitter.discover_variables(all_content)
+        filled = emitter.fill_variables(vars)
+
+        print(filled)
+
 def main():
     argp.init()
     argp.sub("barrel", do_barrel)

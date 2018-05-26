@@ -1,0 +1,7 @@
+ScfPrjHello vs ScfBarWorld in pascalcase.
+
+Kebab case scf-prj-hello scf-bar-world
+
+snake scf_prj_hello scf_bar_world
+
+Dotted scf.prj.hello scf.bar.world
