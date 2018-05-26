@@ -34,11 +34,11 @@ def rendered_content(template, replacements):
 
 def fill_variables(vars):
     d = {}
-
+    print("Will need variables:", ", ".join(vars))
     print("Use snake-case! E.g. if you want MyClass, enter my-class.")
     for v in vars:
         val = raw_input("%s: " % v)
-        d[v] = val
+        d[v] = val.strip()
         print(get_renderings(v,val))
     return d
 

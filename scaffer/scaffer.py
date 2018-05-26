@@ -99,7 +99,7 @@ def do_gen(arg):
     tgt_dir = os.getcwd()
 
     ts = find_templates()
-    if arg.l:
+    if not arg.template:
         pprint.pprint(list(ts))
         return
     to_gen = (t for t in ts if t[0] in arg.template)
@@ -126,8 +126,8 @@ def main():
     gi.arg("--python", action="store_true")
     argp.sub("setup", do_setuppy)
     gen = argp.sub("gen", do_gen, help="Generate from complex template")
-    gen.arg('-l', action="store_true", help="List available templates")
-    gen.arg("template", help="Template(s) to generate", nargs="*")
+    gen.arg('-v', help="Give value to variable")
+    gen.arg("template", help="Template to generate", nargs="?")
     argp.parse()
 
 if __name__ == "__main__":
