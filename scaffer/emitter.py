@@ -4,6 +4,8 @@ import os
 import re
 import itertools
 
+
+
 def discover_variables(cont):
     locase_spans = re.findall(r"scf[\.\-\_]([a-z]+)", cont)
     upcase_spans = list((u.lower() for u in re.findall(r"Scf([A-Z][a-z]+)", cont)))
@@ -26,12 +28,9 @@ def apply_replacements(content, replacements):
     return cont
 
 def rendered_content(template, replacements):
-    print("template", replacements)
     return [
         (apply_replacements(fname, replacements), apply_replacements(content, replacements)) for (fname, content) in template
     ]
-
-
 
 def fill_variables(vars):
     d = {}

@@ -11,8 +11,15 @@ import emitter
 TEMPLATE_ROOT = "https://raw.githubusercontent.com/vivainio/scaffer-templates/master/templates/%s"
 GITIGNORE = "https://raw.githubusercontent.com/github/gitignore/master/%s.gitignore"
 
+def ensure_dir_for(pth):
+    dname = os.path.dirname(pth)
+    if not os.path.isdir(dname):
+        os.makedirs(dname)
+
+
 def emit_file(pth, cont):
     print("- Emit", pth)
+    ensure_dir_for(pth)
     if os.path.exists(pth):
         print("Can't overwrite", pth)
         return
@@ -88,6 +95,9 @@ def find_templates():
 
 def do_gen(arg):
     """ Generate complex template """
+
+    tgt_dir = os.getcwd()
+
     ts = find_templates()
     if arg.l:
         pprint.pprint(list(ts))
@@ -103,7 +113,9 @@ def do_gen(arg):
         filled = emitter.fill_variables(vars)
         renderings = emitter.var_renderings(filled)
         new_cont = emitter.rendered_content(content, renderings)
-        print(new_cont)
+        for fname, content in new_cont:
+            absname = os.path.join(tgtdir, fname)
+            emit_file(fname, content)
 
 def main():
     argp.init()
