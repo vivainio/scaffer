@@ -118,7 +118,7 @@ def do_gen(arg):
     if os.path.isdir(arg.template):
         to_gen = [(arg.template, arg.template)]
     else:
-        to_gen = (t for t in ts if t[0] in arg.template)
+        to_gen = (t for t in ts if t[0] == arg.template)
 
     for template in to_gen:
         os.chdir(template[1])
