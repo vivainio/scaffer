@@ -114,8 +114,8 @@ def do_gen(arg):
         renderings = emitter.var_renderings(filled)
         new_cont = emitter.rendered_content(content, renderings)
         for fname, content in new_cont:
-            absname = os.path.join(tgtdir, fname)
-            emit_file(fname, content)
+            absname = os.path.join(tgt_dir, fname)
+            emit_file(absname, content)
 
 def main():
     argp.init()
