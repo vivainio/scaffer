@@ -3,6 +3,9 @@ import os
 import argp
 import glob
 import urllib
+import json
+import pprint
+import itertools
 
 TEMPLATE_ROOT = "https://raw.githubusercontent.com/vivainio/scaffer-templates/master/templates/%s"
 GITIGNORE = "https://raw.githubusercontent.com/github/gitignore/master/%s.gitignore"
@@ -51,6 +54,46 @@ def do_setuppy(arg):
     fetch_template_to("setup.py", "setup_py.py")
 
 
+def discover_files_in_parents(filenames, startdir):
+    cur = startdir
+    while 1:
+        for fname in os.listdir(cur):
+            if fname in filenames:
+                fpath = os.path.join(cur, fname)
+                yield fpath
+        parent = os.path.dirname(cur)
+        if parent == cur:
+            break
+        cur = parent
+
+def get_key_from_json(fname, key):
+    try:
+        c = json.load(open(fname))
+    except ValueError:
+        return None
+    return c.get(key)
+
+def find_templates():
+    files = discover_files_in_parents(['package.json', 'scaffer.json'], os.getcwd())
+    for f in files:
+        dirs = get_key_from_json(f, "scaffer")
+        if not dirs:
+            continue
+        rdir = os.path.dirname(f)
+        for d in dirs:
+            templates = os.listdir(os.path.join(rdir,d))
+            for t in templates:
+                yield (t, os.path.join(rdir,d,t))
+
+
+def do_gen(arg):
+    """ Generate complex template """
+    ts = find_templates()
+    if arg.l:
+        pprint.pprint(list(ts))
+        return
+    to_gen = (t for t in ts if t[0] in arg.template)
+    print(list(to_gen))
 def main():
     argp.init()
     argp.sub("barrel", do_barrel)
@@ -59,6 +102,9 @@ def main():
     gi.arg("--net", action="store_true")
     gi.arg("--python", action="store_true")
     argp.sub("setup", do_setuppy)
+    gen = argp.sub("gen", do_gen, help="Generate from complex template")
+    gen.arg('-l', action="store_true", help="List available templates")
+    gen.arg("template", help="Template(s) to generate", nargs="*")
     argp.parse()
 
 if __name__ == "__main__":
