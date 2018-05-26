@@ -1,3 +1,4 @@
+#!python2
 from __future__ import print_function
 import os
 import argp
@@ -93,23 +94,31 @@ def find_templates():
             continue
         rdir = os.path.dirname(f)
         for d in dirs:
-            templates = os.listdir(os.path.join(rdir,d))
+            tdir = os.path.join(rdir,d)
+            if not os.path.isdir(tdir):
+                print("Warning! Missing:",tdir)
+                continue
+
+            templates = os.listdir(tdir)
             for t in templates:
-                full = os.path.normpath(os.path.join(rdir,d,t))
+                full = os.path.normpath(os.path.join(tdir,t))
                 if os.path.isdir(full):
                     yield (t, full)
 
 def do_gen(arg):
     """ Generate complex template """
     tgt_dir = os.getcwd()
-
     ts = find_templates()
     if not arg.template:
         print("No template specified. Available templates:")
         for n, p in ts:
             print("%s\t%s" % (n,p))
         return
-    to_gen = (t for t in ts if t[0] in arg.template)
+
+    if os.path.isdir(arg.template):
+        to_gen = [(arg.template, arg.template)]
+    else:
+        to_gen = (t for t in ts if t[0] in arg.template)
 
     for template in to_gen:
         os.chdir(template[1])
