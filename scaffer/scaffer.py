@@ -17,10 +17,10 @@ def ensure_dir_for(pth):
         os.makedirs(dname)
 
 
-def emit_file(pth, cont):
+def emit_file(pth, cont, overwrite=False):
     print("- Emit", pth)
     ensure_dir_for(pth)
-    if os.path.exists(pth):
+    if os.path.exists(pth) and not overwrite:
         print("Can't overwrite", pth)
         return
     open(pth,"w").write(cont)
@@ -95,7 +95,9 @@ def find_templates():
         for d in dirs:
             templates = os.listdir(os.path.join(rdir,d))
             for t in templates:
-                yield (t, os.path.join(rdir,d,t))
+                full = os.path.normpath(os.path.join(rdir,d,t))
+                if os.path.isdir(full):
+                    yield (t, full)
 
 def do_gen(arg):
     """ Generate complex template """
@@ -103,7 +105,9 @@ def do_gen(arg):
 
     ts = find_templates()
     if not arg.template:
-        pprint.pprint(list(ts))
+        print("No template specified. Available templates:")
+        for n, p in ts:
+            print("%s\t%s" % (n,p))
         return
     to_gen = (t for t in ts if t[0] in arg.template)
 
@@ -111,7 +115,6 @@ def do_gen(arg):
         os.chdir(template[1])
         content = list(emitter.files_with_content("."))
         all_content = "".join(t[1] for t in content)
-
         prefilled_vars = {
             k:v for (k,v) in (a.split("=", 1) for a in arg.v)
         }
@@ -119,17 +122,14 @@ def do_gen(arg):
         unknown_prefilled = set(prefilled_vars.keys()).difference(vars)
         if unknown_prefilled:
             print("Warning! Unknown variables on command line:", ", ".join(unknown_prefilled))
-
         to_fill = vars.difference(set(prefilled_vars.keys()))
-
-        filled = emitter.prompt_variables(to_fill)
+        filled = emitter.prompt_variables(to_fill) if to_fill else {}
         filled.update(prefilled_vars)
-
         renderings = emitter.var_renderings(filled)
         new_cont = emitter.rendered_content(content, renderings)
         for fname, content in new_cont:
-            absname = os.path.join(tgt_dir, fname)
-            emit_file(absname, content)
+            absname = os.path.normpath(os.path.join(tgt_dir, fname))
+            emit_file(absname, content, arg.f)
 
 def main():
     argp.init()
@@ -139,8 +139,9 @@ def main():
     gi.arg("--net", action="store_true")
     gi.arg("--python", action="store_true")
     argp.sub("setup", do_setuppy)
-    gen = argp.sub("gen", do_gen, help="Generate from complex template")
-    gen.arg('-v', help="Give value to variable", nargs="+", default=[])
+    gen = argp.sub("g", do_gen, help="Generate from named template")
+    gen.arg('-v', help="Give value to variable", nargs="+", default=[], metavar="variable=value")
+    gen.arg('-f', help="Overwrite files if needed", action="store_true")
     gen.arg("template", help="Template to generate", nargs="?")
     argp.parse()
 
