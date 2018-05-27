@@ -102,7 +102,7 @@ def do_gen(arg):
     ts = find_templates()
     if not arg.template:
         print("No template specified. Available templates:")
-        for n, p in ts:
+        for n, p in sorted(ts):
             print("%s\t%s" % (n,p))
         return
 
@@ -147,7 +147,7 @@ def do_add(arg):
     old = read_rc()
     olddirs = old.get("scaffer", [])
     olddirs.append(os.getcwd())
-    old["scaffer"] = olddirs
+    old["scaffer"] = sorted(set(olddirs))
     write_rc(old)
 
 def main():
