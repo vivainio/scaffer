@@ -1,7 +1,7 @@
 from distutils.core import setup
 
 setup(name='Scaffer',
-      version='0.2.0',
+      version='0.3.0',
       description='Scaffold stuff',
       author='Ville M. Vainio',
       author_email='vivainio@gmail.com',
