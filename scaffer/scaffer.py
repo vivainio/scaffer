@@ -12,6 +12,8 @@ import emitter
 TEMPLATE_ROOT = "https://raw.githubusercontent.com/vivainio/scaffer-templates/master/templates/%s"
 GITIGNORE = "https://raw.githubusercontent.com/github/gitignore/master/%s.gitignore"
 
+RC_FILE = os.path.expanduser("~/.scaffer/scaffer.json")
+
 def ensure_dir_for(pth):
     dname = os.path.dirname(pth)
     if not os.path.isdir(dname):
@@ -140,18 +142,43 @@ def do_gen(arg):
             absname = os.path.normpath(os.path.join(tgt_dir, fname))
             emit_file(absname, content, arg.f)
 
+def read_rc():
+    if not os.path.isfile(RC_FILE):
+        return {}
+    return json.load(open(RC_FILE))
+
+def write_rc(d):
+    ensure_dir_for(RC_FILE)
+    json.dump(d, open(RC_FILE, "w"), indent=2)
+
+
+
+def do_add(arg):
+    """ Add current directory to global templates directory """
+    old = read_rc()
+    olddirs = old.get("scaffer", [])
+    olddirs.append(os.getcwd())
+    old["scaffer"] = olddirs
+    write_rc(old)
+
 def main():
     argp.init()
     argp.sub("barrel", do_barrel)
     argp.sub("mit", do_mit)
+
+    # gitignore
     gi = argp.sub("gitignore", do_gitignore)
     gi.arg("--net", action="store_true")
     gi.arg("--python", action="store_true")
     argp.sub("setup", do_setuppy)
+
+    # g
     gen = argp.sub("g", do_gen, help="Generate from named template")
     gen.arg('-v', help="Give value to variable", nargs="+", default=[], metavar="variable=value")
     gen.arg('-f', help="Overwrite files if needed", action="store_true")
     gen.arg("template", help="Template to generate", nargs="?")
+
+    argp.sub("add", do_add)
     argp.parse()
 
 if __name__ == "__main__":
