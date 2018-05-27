@@ -9,7 +9,6 @@ import pprint
 import itertools
 import emitter
 
-TEMPLATE_ROOT = "https://raw.githubusercontent.com/vivainio/scaffer-templates/master/templates/%s"
 GITIGNORE = "https://raw.githubusercontent.com/github/gitignore/master/%s.gitignore"
 
 RC_FILE = os.path.expanduser("~/.scaffer/scaffer.json")
@@ -32,11 +31,9 @@ def fetch_url_to(fname, url):
     print("- Emit", fname, url)
     urllib.urlretrieve(url, fname)
 
-def fetch_template_to(fname, urlpath):
-    template_url = TEMPLATE_ROOT % urlpath
-    fetch_url_to(fname, template_url)
 
 def do_gitignore(args):
+    """ Create gitignore file """
     if args.net:
         name = "VisualStudio"
     elif args.python:
@@ -55,14 +52,6 @@ def do_barrel(arg):
     lines = ['export * from "./%s";' % os.path.splitext(f)[0] for f in files ]
 
     emit_file("index.ts", "\n".join(lines))
-
-def do_mit(arg):
-    """ create MIT license in project """
-    fetch_template_to("LICENSE", "MIT_LICENSE")
-
-def do_setuppy(arg):
-    """ Create setup.py """
-    fetch_template_to("setup.py", "setup_py.py")
 
 
 def discover_files_in_parents(filenames, startdir):
@@ -163,22 +152,21 @@ def do_add(arg):
 
 def main():
     argp.init()
-    argp.sub("barrel", do_barrel)
-    argp.sub("mit", do_mit)
 
+    argp.sub("barrel", do_barrel, help="Create index.tx for current directory")
     # gitignore
-    gi = argp.sub("gitignore", do_gitignore)
+    gi = argp.sub("gitignore", do_gitignore, help="Create .gitignore file")
     gi.arg("--net", action="store_true")
     gi.arg("--python", action="store_true")
-    argp.sub("setup", do_setuppy)
 
     # g
-    gen = argp.sub("g", do_gen, help="Generate from named template")
+    gen = argp.sub("g", do_gen, help="Generate code from named template")
     gen.arg('-v', help="Give value to variable", nargs="+", default=[], metavar="variable=value")
     gen.arg('-f', help="Overwrite files if needed", action="store_true")
     gen.arg("template", help="Template to generate", nargs="?")
 
-    argp.sub("add", do_add)
+    argp.sub("add", do_add, help="Add current directory as template root in user global scaffer.json")
+
     argp.parse()
 
 if __name__ == "__main__":
