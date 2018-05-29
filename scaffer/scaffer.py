@@ -15,7 +15,7 @@ RC_FILE = os.path.expanduser("~/.scaffer/scaffer.json")
 
 def ensure_dir_for(pth):
     dname = os.path.dirname(pth)
-    if not os.path.isdir(dname):
+    if dname and not os.path.isdir(dname):
         os.makedirs(dname)
 
 
