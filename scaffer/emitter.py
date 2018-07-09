@@ -49,5 +49,8 @@ def files_with_content(rootdir):
     """ -> (fname, content)[] """
     for dirpath, _, fnames in os.walk(rootdir):
         for f in fnames:
+            # reserved namespace
+            if f.startswith("scaffer_"):
+                continue
             dp = os.path.join(dirpath, f)
             yield (dp, open(dp).read())
