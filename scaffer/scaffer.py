@@ -25,7 +25,7 @@ def emit_file(pth, cont, overwrite=False):
     if os.path.exists(pth) and not overwrite:
         print("Can't overwrite", pth)
         return
-    open(pth,"w").write(cont)
+    open(pth,"wb").write(cont)
 
 def fetch_url_to(fname, url):
     print("- Emit", fname, url)
