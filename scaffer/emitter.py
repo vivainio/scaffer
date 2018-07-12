@@ -50,12 +50,10 @@ def prompt_variables(vars):
                 break
 
         d[v] = val.strip()
-        print(get_renderings(v,val))
     return d
 
 def var_renderings(d):
     r =  list(itertools.chain(*[get_renderings(k,v) for (k,v) in d.items()]))
-    print(r)
     return r
 
 def files_with_content(rootdir):
