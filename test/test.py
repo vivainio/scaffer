@@ -14,6 +14,9 @@ run(["g",  "sinit"])
 assert "@" in open("projectdetails.txt").read()
 
 # these should not ask anything since all scf instances are invalid
-run(["g", "errorcases"])
+run(["g", "-f", "errorcases"])
+
+assert open("error_prone.txt").read() == open("gen2/errorcases/error_prone.txt").read()
 
 run(["g", "doesnotexist"])
+
