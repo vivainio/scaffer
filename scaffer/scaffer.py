@@ -110,8 +110,10 @@ def do_gen(arg):
     if os.path.isdir(arg.template):
         to_gen = [(arg.template, arg.template)]
     else:
-        to_gen = (t for t in ts if t[0] == arg.template)
-
+        to_gen = [t for t in ts if t[0] == arg.template]
+    if not to_gen:
+        print("ERROR: Template not found:", arg.template)
+        return
     for template in to_gen:
         os.chdir(template[1])
         content = list(emitter.files_with_content("."))
