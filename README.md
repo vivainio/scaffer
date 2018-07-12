@@ -15,9 +15,24 @@ it will still compile and/or run. That way can modify and test templates natural
 
 ## Logic
 
-If you want to have template variable 'myvar', represent in by one of these in the templates:
+If you want to have template variable 'myvar', represent it by one of these in the templates:
 
-ScfMyvar, scf-myvar, scf.myvar, scf_myvar.
+ScfMyvar, scf-myvar, scf.myvar, scf_myvar, or uppercase equivalents.
+
+Example of file with all the supported templates, targeting variables "prj" and "bar":
+```
+ScfPrjHello vs ScfBarWorld in pascalcase.
+Lower kebab scf-prj-hello scf-bar-world
+Lower snake scf_prj_hello scf_bar_world
+Lower dotted scf.prj.hello scf.bar.world
+Lower flat scfprj scfbar
+Upper dotted SCF.PRJ.HELLO SCF.BAR.world
+Upper kebab SCF-PRJ-HELLO SCF-BAR-world
+Upper snake SCF_PRJ_HELLO SCF_BAR_world
+Upper flat SCFPRJ SCFBAR
+```
+
+Note that the "flat" variants (`scfprj` or `SCFPRJ`) can't contain a suffix for obvious reasons.
 
 When scaffer sees these markers in your templates, it will ask for these and do a smart search-and-replace operation that does
 PascalCasing, kebab-casing, dot.separation and snake_casing based on what notation you used in the template.
