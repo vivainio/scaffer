@@ -96,23 +96,6 @@ def find_templates():
                 if os.path.isdir(full):
                     yield (t, full)
 
-def run_scaffer_init(pth, vars, prefilled, target_dir):
-    """ Will mutate prefilled! """
-    print("Running", pth)
-    cont=  open(pth).read()
-    output_dict = {}
-    ns = {
-        "scaffer_in": {
-            "target_dir": target_dir,
-            "vars": vars,
-            "prefilled": prefilled
-        },
-        # the populated vars should end up here
-        "scaffer_out": output_dict
-    }
-    exec(cont,ns)
-    print("Init populated:", ns["scaffer_out"])
-    prefilled.update(output_dict)
 
 def do_gen(arg):
     """ Generate complex template """
@@ -138,7 +121,7 @@ def do_gen(arg):
         }
         vars = emitter.discover_variables(all_content)
         if os.path.isfile("scaffer_init.py"):
-            run_scaffer_init(os.path.abspath("scaffer_init.py"), vars, prefilled_vars, tgt_dir)
+            emitter.run_scaffer_init(os.path.abspath("scaffer_init.py"), vars, prefilled_vars, tgt_dir)
 
         unknown_prefilled = set(prefilled_vars.keys()).difference(vars)
         if unknown_prefilled:

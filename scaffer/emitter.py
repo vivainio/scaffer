@@ -3,6 +3,7 @@ from __future__ import print_function
 import os
 import re
 import itertools
+from pprint import pprint
 
 
 
@@ -67,3 +68,24 @@ def files_with_content(rootdir):
                 continue
             dp = os.path.join(dirpath, f)
             yield (dp, open(dp,"rb").read())
+
+def run_scaffer_init(pth, vars, prefilled, target_dir):
+    """ Run scaffer_init.py """
+    print("Running", pth)
+    cont=  open(pth).read()
+    output_dict = {}
+    ns = {
+        "scaffer_in": {
+            "target_dir": target_dir,
+            "vars": vars,
+            "prefilled": prefilled
+        },
+        # the populated vars should end up here
+        "scaffer_out": output_dict
+    }
+    exec(cont, ns)
+    if output_dict:
+        print("Variables from scaffer_init.py:")
+        pprint(output_dict)
+        prefilled.update(output_dict)
+
