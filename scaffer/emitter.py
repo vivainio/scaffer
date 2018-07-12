@@ -42,7 +42,13 @@ def prompt_variables(vars):
     print("Will need variables:", ", ".join(vars))
     print("Use snake-case. E.g. if you want MyClass, enter 'my-class'.")
     for v in vars:
-        val = raw_input("%s: " % v)
+        while 1:
+            val = raw_input("%s: " % v)
+            if val != val.lower():
+                print("That was not snake-case!")
+            else:
+                break
+
         d[v] = val.strip()
         print(get_renderings(v,val))
     return d
