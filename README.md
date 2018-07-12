@@ -2,16 +2,16 @@
 
 The underengineered scaffolding tool.
 
-Unlike many other scaffolding tools, this one:
+Unlike many other scaffolding tools (like cookiecutter, angular schematics etc), this one:
 
 - Allows using working/compiling code as templates. That is, you only need to rename symbols in your live code and
-it will still compile and/or run.
+it will still compile and/or run. That way can modify and test templates naturally without having to remaster the template for publication.
 - Does not require you to create any configuration for your templates. Just place the files somewhere and use.
-- Allows using templates from your own repo/source tree
-- Allows tree to contain as many templates as you want
-- Is not implemented in Node
-
-It's the missing "dotnet new gitignore"!
+- Allows using templates from your own repo/source tree.
+- Allows tree to contain as many templates as you want.
+- Is turing complete! You can add [scaffer_init.py](https://github.com/vivainio/scaffer-templates/blob/master/templates/cs-lib/scaffer_init.py) to your template,
+  e.g to read values to template variables from external systew (e.g. call git to get username, check directory name to get project name...)
+- Is not implemented in Node.
 
 ## Logic
 
@@ -19,10 +19,11 @@ If you want to have template variable 'myvar', represent in by one of these in t
 
 ScfMyvar, scf-myvar, scf.myvar, scf_myvar.
 
-When scaffer sees these markers in your templates, it will ask for these and do a smart search-and-replace operation that does PascalCasing, kebab-casing, dot.separation and snake_casing based on what notation you used in the template.
+When scaffer sees these markers in your templates, it will ask for these and do a smart search-and-replace operation that does
+PascalCasing, kebab-casing, dot.separation and snake_casing based on what notation you used in the template.
 
 The user will always give a snake-cased variation when prompted. So if the user wants to emit MyClass, she just enters
-my-class when prompted. Scaffer will know how to emit the right word separation format at the replacement sites.
+my-class when prompted. Scaffer will know how to emit the right compound word format at the replacement sites.
 
 Template variables can also be in file and directory names, and behave as you would expect.
 
@@ -63,14 +64,6 @@ positional arguments:
     g                   Generate code from named template
     add                 Add current directory as template root in user global
                         scaffer.json
-
-
-positional arguments:
-  {barrel,mit,gitignore,setup}
-
-optional arguments:
-  -h, --help            show this help message and exit
-
 
 $ scaffer g -h
 
