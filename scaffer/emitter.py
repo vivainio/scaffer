@@ -7,9 +7,11 @@ import itertools
 
 
 def discover_variables(cont):
-    locase_spans = re.findall(r"scf[\.\-\_]([a-z]+)", cont)
-    upcase_spans = list((u.lower() for u in re.findall(r"Scf([A-Z][a-z]+)", cont)))
-    return set(locase_spans + upcase_spans)
+    locase_spans = re.findall(r"scf[\.\-\_]?([a-z]+)", cont)
+    upcase_spans = list((u.lower() for u in re.findall(r"SCF[\.\-\_]?([A-Z]+)", cont)))
+    pascalcase_spans = list((u.lower() for u in re.findall(r"Scf([A-Z][a-z]+)", cont)))
+
+    return set(locase_spans + upcase_spans + pascalcase_spans)
 
 
 def get_renderings(var_name, var_value):
@@ -18,7 +20,10 @@ def get_renderings(var_name, var_value):
         ("scf." + var_name, ".".join(parts)),
         ("scf-" + var_name, "-".join(parts)),
         ("scf_" + var_name, "_".join(parts)),
-        ("Scf" + var_name.title(), "".join(p[0].upper() + p[1:] for p in parts))
+        ("Scf" + var_name.title(), "".join(p[0].upper() + p[1:] for p in parts)),
+        ("scf" + var_name, "".join(parts)),
+        ("SCF" + var_name.upper(), "".join(parts).upper())
+
     ]
 
 def apply_replacements(content, replacements):
@@ -43,7 +48,9 @@ def prompt_variables(vars):
     return d
 
 def var_renderings(d):
-    return list(itertools.chain(*[get_renderings(k,v) for (k,v) in d.items()]))
+    r =  list(itertools.chain(*[get_renderings(k,v) for (k,v) in d.items()]))
+    print(r)
+    return r
 
 def files_with_content(rootdir):
     """ -> (fname, content)[] """

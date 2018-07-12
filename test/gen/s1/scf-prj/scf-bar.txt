@@ -1,4 +1,9 @@
 ScfPrjHello vs ScfBarWorld in pascalcase.
-Kebab case scf-prj-hello scf-bar-world
-snake case scf_prj_hello scf_bar_world
-Dotted scf.prj.hello scf.bar.world
+Lower kebab scf-prj-hello scf-bar-world
+Lower snake scf_prj_hello scf_bar_world
+Lower dotted scf.prj.hello scf.bar.world
+Lower flat scfprj scfbar
+Upper dotted SCF.PRJ.HELLO SCF.BAR.world
+Upper kebab SCF-PRJ-HELLO SCF-BAR-world
+Upper snake SCF_PRJ_HELLO SCF_BAR_world
+Upper flat SCFPRJ SCFBAR
