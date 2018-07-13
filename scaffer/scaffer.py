@@ -19,8 +19,13 @@ def ensure_dir_for(pth):
         os.makedirs(dname)
 
 
-def emit_file(pth, cont, overwrite=False):
+def emit_file(pth, cont, overwrite=False, dry = False):
+    if dry:
+        print("- Would emit %s [%dB] "% (pth, len(cont)))
+        return
     print("- Emit", pth)
+
+
     ensure_dir_for(pth)
     if os.path.exists(pth) and not overwrite:
         print("Can't overwrite", pth)
@@ -133,9 +138,10 @@ def do_gen(arg):
         filled.update(prefilled_vars)
         renderings = emitter.var_renderings(filled)
         new_cont = emitter.rendered_content(content, renderings)
+
         for fname, content in new_cont:
             absname = os.path.normpath(os.path.join(tgt_dir, fname))
-            emit_file(absname, content, arg.f)
+            emit_file(absname, content, arg.f, arg.dry)
 
 def read_rc():
     if not os.path.isfile(RC_FILE):
@@ -169,6 +175,7 @@ def main():
     gen = argp.sub("g", do_gen, help="Generate code from named template")
     gen.arg('-v', help="Give value to variable", nargs="+", default=[], metavar="variable=value")
     gen.arg('-f', help="Overwrite files if needed", action="store_true")
+    gen.arg("--dry", action="store_true", help="Dry run, do not create files")
     gen.arg("template", help="Template to generate", nargs="?")
 
     argp.sub("add", do_add, help="Add current directory as template root in user global scaffer.json")
