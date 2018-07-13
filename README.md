@@ -39,7 +39,7 @@ Note that the "flat" variants (`scfprj` or `SCFPRJ`) can't contain a suffix for 
 When scaffer sees these markers in your templates, it will ask for these and do a smart search-and-replace operation that does
 PascalCasing, kebab-casing, dot.separation and snake_casing based on what notation you used in the template.
 
-The user will always give a snake-cased variation when prompted. So if the user wants to emit MyClass, she just enters
+The user will always give a kebab-cased variation when prompted. So if the user wants to emit MyClass, she just enters
 my-class when prompted. Scaffer will know how to emit the right compound word format at the replacement sites.
 
 Template variables can also be in file and directory names, and behave as you would expect.
