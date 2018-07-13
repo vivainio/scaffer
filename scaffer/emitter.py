@@ -29,7 +29,7 @@ def get_renderings(var_name, var_value):
         ("scf." + var_name, ".".join(parts)),
         ("scf-" + var_name, "-".join(parts)),
         ("scf_" + var_name, "_".join(parts)),
-        ("Scf" + var_name.title(), "".join(p[0].upper() + p[1:] for p in parts)),
+        ("Scf" + var_name.title(), "".join(p.title() for p in parts)),
         ("scf" + var_name, "".join(parts)),
         ("SCF" + var_name.upper(), "".join(parts).upper())
 
