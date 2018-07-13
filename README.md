@@ -1,6 +1,7 @@
 # Scaffer
 
-Yet another scaffolding tool. This is the one that actually does what you want, honest.
+Yet another scaffolding tool. This is the one that actually does what you want, honest. If you are not a reading type of
+person, [see demo on YouTube](https://www.youtube.com/watch?v=WrXONcpl87A).
 
 Unlike many other scaffolding tools (like cookiecutter, angular schematics etc), this one:
 
