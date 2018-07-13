@@ -4,6 +4,13 @@ import os
 import re
 import itertools
 from pprint import pprint
+import contextlib
+
+@contextlib.contextmanager
+def remember_cwd():
+    curdir= os.getcwd()
+    try: yield
+    finally: os.chdir(curdir)
 
 def is_binary_content(cont):
     return '\0' in cont
@@ -73,20 +80,25 @@ def files_with_content(rootdir):
             yield (dp, open(dp,"rb").read())
 
 def run_scaffer_init(pth, vars, prefilled, target_dir):
-    """ Run scaffer_init.py """
+    """ Run scaffer_init.py.
+
+    This is run in target dir!
+     """
     print("Running", pth)
     cont=  open(pth).read()
     output_dict = {}
     ns = {
         "scaffer_in": {
-            "target_dir": target_dir,
             "vars": vars,
             "prefilled": prefilled
         },
         # the populated vars should end up here
         "scaffer_out": output_dict
     }
-    exec(cont, ns)
+    with remember_cwd():
+        os.chdir(target_dir)
+        exec(cont, ns)
+
     if output_dict:
         print("Variables from scaffer_init.py:")
         pprint(output_dict)

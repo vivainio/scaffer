@@ -1,8 +1,7 @@
 import os
 
-print("hello from scaffer init")
-print(scaffer_in)
 
+print(scaffer_in)
 print(scaffer_out)
 
 def git_data():
@@ -12,9 +11,8 @@ def git_data():
     }
 
 d = git_data()
+d["targetdir"] = os.getcwd()
 scaffer_out.update(d)
-
-scaffer_out["targetdir"] = scaffer_in["target_dir"]
 
 
 
