@@ -9,7 +9,7 @@ Unlike many other scaffolding tools (like cookiecutter, angular schematics etc),
 it will still compile and/or run. That way can modify and test templates naturally without having to remaster the template for publication.
 - Does not require you to create any configuration for your templates. Just place the files somewhere and use.
 - Allows using templates from your own repo/source tree.
-- Allows tree to contain as many templates as you want.
+- Allows tree to contain as many templates as you want. E.g. with cookiecutter, you are stuck with one template per repo.
 - Is turing complete! You can add [scaffer_init.py](https://github.com/vivainio/scaffer-templates/blob/master/templates/cs-lib/scaffer_init.py) to your template,
   e.g to read values to template variables from external systew (e.g. call git to get username, check directory name to get project name...)
 - Is not implemented in Node.
