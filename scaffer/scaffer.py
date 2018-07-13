@@ -29,7 +29,7 @@ def emit_file(pth, cont, overwrite=False, dry = False):
 
     ensure_dir_for(pth)
     if os.path.exists(pth) and not overwrite:
-        print("Can't overwrite", pth)
+        print("Can't overwrite '%s', use -f to force" % pth)
         return
     open(pth,"wb").write(cont)
 
