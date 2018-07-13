@@ -8,6 +8,7 @@ import json
 import pprint
 import itertools
 import emitter
+import string
 
 GITIGNORE = "https://raw.githubusercontent.com/github/gitignore/master/%s.gitignore"
 
@@ -101,15 +102,18 @@ def find_templates():
                 if os.path.isdir(full):
                     yield (t, full)
 
+def longest_string(seq):
+    return reduce(lambda current, s: max(current, len(s)), seq, 0)
 
 def do_gen(arg):
     """ Generate complex template """
     tgt_dir = os.getcwd()
-    ts = find_templates()
+    ts = sorted(find_templates())
     if not arg.template:
         print("No template specified. Available templates:")
-        for n, p in sorted(ts):
-            print("%s\t%s" % (n,p))
+        maxlen = longest_string(t[0] for t in ts)
+        for n, p in ts:
+            print("%s%s" % (string.ljust(n, maxlen+2, " "),p))
         return
 
     if os.path.isdir(arg.template):
