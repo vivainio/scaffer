@@ -16,7 +16,7 @@ def is_binary_content(cont):
     return '\0' in cont
 
 def discover_variables(cont):
-    locase_spans = re.findall(r"scf[\.\-\_]?([a-z]+)", cont)
+    locase_spans = re.findall(r"scf[\.\-\_\:]?([a-z]+)", cont)
     upcase_spans = list((u.lower() for u in re.findall(r"SCF[\.\-\_]?([A-Z]+)", cont)))
     pascalcase_spans = list((u.lower() for u in re.findall(r"Scf([A-Z][a-z]+)", cont)))
 
@@ -29,6 +29,8 @@ def get_renderings(var_name, var_value):
         ("scf." + var_name, ".".join(parts)),
         ("scf-" + var_name, "-".join(parts)),
         ("scf_" + var_name, "_".join(parts)),
+        #special verbatim syntax
+        ("scf:" + var_name, var_value),
         ("Scf" + var_name.title(), "".join(p.title() for p in parts)),
         ("scf" + var_name, "".join(parts)),
         ("SCF" + var_name.upper(), "".join(parts).upper())
@@ -51,15 +53,9 @@ def rendered_content(template, replacements):
 def prompt_variables(vars):
     d = {}
     print("Will need variables:", ", ".join(vars))
-    print("Use snake-case. E.g. if you want MyClass, enter 'my-class'.")
+    print("Use kebab-case. E.g. if you want MyClass, enter 'my-class'.")
     for v in vars:
-        while 1:
-            val = raw_input("%s: " % v)
-            if val != val.lower():
-                print("That was not snake-case!")
-            else:
-                break
-
+        val = raw_input("%s: " % v)
         d[v] = val.strip()
     return d
 

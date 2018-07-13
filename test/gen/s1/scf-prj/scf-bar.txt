@@ -7,3 +7,4 @@ Upper dotted SCF.PRJ.HELLO SCF.BAR.world
 Upper kebab SCF-PRJ-HELLO SCF-BAR-world
 Upper snake SCF_PRJ_HELLO SCF_BAR_world
 Upper flat SCFPRJ SCFBAR
+Verbatim (w/o compound handling) scf:prj scf:bar 'scf:spaced'
