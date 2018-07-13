@@ -83,8 +83,8 @@ positional arguments:
                         scaffer.json
 
 $ scaffer g -h
-
-usage:  g [-h] [-v variable=value [variable=value ...]] [-f] [template]
+usage: scaffer g [-h] [-v variable=value [variable=value ...]] [-f] [--dry]
+                 [template]
 
 positional arguments:
   template              Template to generate
@@ -94,7 +94,7 @@ optional arguments:
   -v variable=value [variable=value ...]
                         Give value to variable
   -f                    Overwrite files if needed
-
+  --dry                 Dry run, do not create files
 ```
 
 
