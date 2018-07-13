@@ -117,7 +117,7 @@ def do_gen(arg):
     for template in to_gen:
         os.chdir(template[1])
         content = list(emitter.files_with_content("."))
-        all_content = "".join(t[0] + "\n"+ t[1] for t in content)
+        all_content = "".join(t[0] + "\n"+ ("" if emitter.is_binary_content(t[1]) else  t[1])  for t in content)
         prefilled_vars = {
             k:v for (k,v) in (a.split("=", 1) for a in arg.v)
         }

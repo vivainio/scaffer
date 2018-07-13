@@ -5,7 +5,8 @@ import re
 import itertools
 from pprint import pprint
 
-
+def is_binary_content(cont):
+    return '\0' in cont
 
 def discover_variables(cont):
     locase_spans = re.findall(r"scf[\.\-\_]?([a-z]+)", cont)
@@ -27,8 +28,10 @@ def get_renderings(var_name, var_value):
 
     ]
 
-def apply_replacements(content, replacements):
-    cont = content
+
+def apply_replacements(cont, replacements):
+    if is_binary_content(cont):
+        return cont
     for (fr,to) in replacements:
         cont = cont.replace(fr, to)
     return cont
