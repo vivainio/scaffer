@@ -1,8 +1,8 @@
 from distutils.core import setup
 
 setup(name='Scaffer',
-      version='0.3.3',
-      description='The underengineered scaffolding tool',
+      version='0.3.8',
+      description="Scaffolding tool (code template emitter)",
       author='Ville M. Vainio',
       author_email='vivainio@gmail.com',
       url='https://github.com/vivainio/scaffer',

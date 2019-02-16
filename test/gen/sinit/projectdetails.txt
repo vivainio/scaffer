@@ -1,0 +1,4 @@
+Hello, you are 'scf-gitusername' with email 'scf-gitemail'
+
+This project will be created at scf-targetdir
+

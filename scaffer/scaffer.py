@@ -8,6 +8,7 @@ import json
 import pprint
 import itertools
 import emitter
+import string
 
 GITIGNORE = "https://raw.githubusercontent.com/github/gitignore/master/%s.gitignore"
 
@@ -19,13 +20,18 @@ def ensure_dir_for(pth):
         os.makedirs(dname)
 
 
-def emit_file(pth, cont, overwrite=False):
+def emit_file(pth, cont, overwrite=False, dry = False):
+    if dry:
+        print("- Would emit %s [%dB] "% (pth, len(cont)))
+        return
     print("- Emit", pth)
+
+
     ensure_dir_for(pth)
     if os.path.exists(pth) and not overwrite:
-        print("Can't overwrite", pth)
+        print("Can't overwrite '%s', use -f to force" % pth)
         return
-    open(pth,"w").write(cont)
+    open(pth,"wb").write(cont)
 
 def fetch_url_to(fname, url):
     print("- Emit", fname, url)
@@ -96,29 +102,38 @@ def find_templates():
                 if os.path.isdir(full):
                     yield (t, full)
 
+def longest_string(seq):
+    return reduce(lambda current, s: max(current, len(s)), seq, 0)
+
 def do_gen(arg):
     """ Generate complex template """
     tgt_dir = os.getcwd()
-    ts = find_templates()
+    ts = sorted(find_templates())
     if not arg.template:
         print("No template specified. Available templates:")
-        for n, p in sorted(ts):
-            print("%s\t%s" % (n,p))
+        maxlen = longest_string(t[0] for t in ts)
+        for n, p in ts:
+            print("%s%s" % (string.ljust(n, maxlen+2, " "),p))
         return
 
     if os.path.isdir(arg.template):
         to_gen = [(arg.template, arg.template)]
     else:
-        to_gen = (t for t in ts if t[0] == arg.template)
-
+        to_gen = [t for t in ts if t[0] == arg.template]
+    if not to_gen:
+        print("ERROR: Template not found:", arg.template)
+        return
     for template in to_gen:
         os.chdir(template[1])
         content = list(emitter.files_with_content("."))
-        all_content = "".join(t[1] for t in content)
+        all_content = "".join(t[0] + "\n"+ ("" if emitter.is_binary_content(t[1]) else  t[1])  for t in content)
         prefilled_vars = {
             k:v for (k,v) in (a.split("=", 1) for a in arg.v)
         }
         vars = emitter.discover_variables(all_content)
+        if os.path.isfile("scaffer_init.py"):
+            emitter.run_scaffer_init(os.path.abspath("scaffer_init.py"), vars, prefilled_vars, tgt_dir)
+
         unknown_prefilled = set(prefilled_vars.keys()).difference(vars)
         if unknown_prefilled:
             print("Warning! Unknown variables on command line:", ", ".join(unknown_prefilled))
@@ -127,9 +142,10 @@ def do_gen(arg):
         filled.update(prefilled_vars)
         renderings = emitter.var_renderings(filled)
         new_cont = emitter.rendered_content(content, renderings)
+
         for fname, content in new_cont:
             absname = os.path.normpath(os.path.join(tgt_dir, fname))
-            emit_file(absname, content, arg.f)
+            emit_file(absname, content, arg.f, arg.dry)
 
 def read_rc():
     if not os.path.isfile(RC_FILE):
@@ -163,6 +179,7 @@ def main():
     gen = argp.sub("g", do_gen, help="Generate code from named template")
     gen.arg('-v', help="Give value to variable", nargs="+", default=[], metavar="variable=value")
     gen.arg('-f', help="Overwrite files if needed", action="store_true")
+    gen.arg("--dry", action="store_true", help="Dry run, do not create files")
     gen.arg("template", help="Template to generate", nargs="?")
 
     argp.sub("add", do_add, help="Add current directory as template root in user global scaffer.json")
