@@ -1,2 +1,2 @@
-import scaffer
+from . import scaffer
 scaffer.main()

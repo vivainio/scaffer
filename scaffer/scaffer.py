@@ -7,7 +7,7 @@ import urllib
 import json
 import pprint
 import itertools
-import emitter
+from . import emitter
 import string
 
 GITIGNORE = "https://raw.githubusercontent.com/github/gitignore/master/%s.gitignore"
