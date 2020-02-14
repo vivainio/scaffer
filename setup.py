@@ -1,7 +1,7 @@
-from distutils.core import setup
+from setuptools import setup
 
 setup(name='Scaffer',
-      version='0.4.0',
+      version='0.7.0',
       description="Scaffolding tool (code template emitter)",
       author='Ville M. Vainio',
       author_email='vivainio@gmail.com',
