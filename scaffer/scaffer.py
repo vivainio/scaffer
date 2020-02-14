@@ -9,6 +9,7 @@ import pprint
 import itertools
 from . import emitter
 import string
+import urllib.request
 
 GITIGNORE = "https://raw.githubusercontent.com/github/gitignore/master/%s.gitignore"
 
@@ -35,7 +36,7 @@ def emit_file(pth, cont, overwrite=False, dry = False):
 
 def fetch_url_to(fname, url):
     print("- Emit", fname, url)
-    urllib.urlretrieve(url, fname)
+    urllib.request.urlretrieve(url, fname)
 
 
 def do_gitignore(args):
