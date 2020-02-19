@@ -10,6 +10,7 @@ import itertools
 from . import emitter
 import string
 import urllib.request
+import functools
 
 GITIGNORE = "https://raw.githubusercontent.com/github/gitignore/master/%s.gitignore"
 
@@ -104,7 +105,7 @@ def find_templates():
                     yield (t, full)
 
 def longest_string(seq):
-    return reduce(lambda current, s: max(current, len(s)), seq, 0)
+    return functools.reduce(lambda current, s: max(current, len(s)), seq, 0)
 
 def do_gen(arg):
     """ Generate complex template """
@@ -114,7 +115,7 @@ def do_gen(arg):
         print("No template specified. Available templates:")
         maxlen = longest_string(t[0] for t in ts)
         for n, p in ts:
-            print("%s%s" % (string.ljust(n, maxlen+2, " "),p))
+            print("%s%s" % (n.ljust(maxlen+2, " "),p))
         return
 
     if os.path.isdir(arg.template):
