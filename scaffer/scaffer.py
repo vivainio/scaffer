@@ -1,14 +1,10 @@
-#!python2
 from __future__ import print_function
 import os
 import argp
 import glob
 import urllib
 import json
-import pprint
-import itertools
 from . import emitter
-import string
 import urllib.request
 import functools
 
@@ -109,7 +105,7 @@ def longest_string(seq):
 
 def do_gen(arg):
     """ Generate complex template """
-    tgt_dir = os.getcwd()
+    tgt_dir = os.getcwd().encode()
     ts = sorted(find_templates())
     if not arg.template:
         print("No template specified. Available templates:")
@@ -128,9 +124,9 @@ def do_gen(arg):
     for template in to_gen:
         os.chdir(template[1])
         content = list(emitter.files_with_content("."))
-        all_content = "".join(t[0] + "\n"+ ("" if emitter.is_binary_content(t[1]) else  t[1])  for t in content)
+        all_content = b"".join(t[0] + b"\n"+ (b"" if emitter.is_binary_content(t[1]) else  t[1])  for t in content)
         prefilled_vars = {
-            k:v for (k,v) in (a.split("=", 1) for a in arg.v)
+            k.encode():v.encode() for (k,v) in (a.split("=", 1) for a in arg.v)
         }
         vars = emitter.discover_variables(all_content)
         if os.path.isfile("scaffer_init.py"):
@@ -158,8 +154,6 @@ def write_rc(d):
     ensure_dir_for(RC_FILE)
     json.dump(d, open(RC_FILE, "w"), indent=2)
 
-
-
 def do_add(arg):
     """ Add current directory to global templates directory """
     old = read_rc()
@@ -185,7 +179,6 @@ def main():
     gen.arg("template", help="Template to generate", nargs="?")
 
     argp.sub("add", do_add, help="Add current directory as template root in user global scaffer.json")
-
     argp.parse()
 
 if __name__ == "__main__":

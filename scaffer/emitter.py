@@ -16,24 +16,24 @@ def is_binary_content(cont):
     return b'\0' in cont
 
 def discover_variables(cont):
-    locase_spans = re.findall(r"scf[\.\-\_\:]?([a-z]+)", cont)
-    upcase_spans = list((u.lower() for u in re.findall(r"SCF[\.\-\_]?([A-Z]+)", cont)))
-    pascalcase_spans = list((u.lower() for u in re.findall(r"Scf([A-Z][a-z]+)", cont)))
+    locase_spans = re.findall(rb"scf[\.\-\_\:]?([a-z]+)", cont)
+    upcase_spans = list((u.lower() for u in re.findall(rb"SCF[\.\-\_]?([A-Z]+)", cont)))
+    pascalcase_spans = list((u.lower() for u in re.findall(rb"Scf([A-Z][a-z]+)", cont)))
 
     return set(locase_spans + upcase_spans + pascalcase_spans)
 
 
-def get_renderings(var_name, var_value):
-    parts = var_value.split("-")
+def get_renderings(var_name: bytes, var_value: bytes):
+    parts = var_value.split(b"-")
     return [
-        ("scf." + var_name, ".".join(parts)),
-        ("scf-" + var_name, "-".join(parts)),
-        ("scf_" + var_name, "_".join(parts)),
+        (b"scf." + var_name, b".".join(parts)),
+        (b"scf-" + var_name, b"-".join(parts)),
+        (b"scf_" + var_name, b"_".join(parts)),
         #special verbatim syntax
-        ("scf:" + var_name, var_value),
-        ("Scf" + var_name.title(), "".join(p.title() for p in parts)),
-        ("scf" + var_name, "".join(parts)),
-        ("SCF" + var_name.upper(), "".join(parts).upper())
+        (b"scf:" + var_name, var_value),
+        (b"Scf" + var_name.title(), b"".join(p.title() for p in parts)),
+        (b"scf" + var_name, b"".join(parts)),
+        (b"SCF" + var_name.upper(), b"".join(parts).upper())
 
     ]
 
@@ -52,11 +52,11 @@ def rendered_content(template, replacements):
 
 def prompt_variables(vars):
     d = {}
-    print("Will need variables:", ", ".join(vars))
+    print("Will need variables:", b", ".join(vars))
     print("Use kebab-case. E.g. if you want MyClass, enter 'my-class'.")
     for v in vars:
-        val = raw_input("%s: " % v)
-        d[v] = val.strip()
+        val = input("%s: " % v)
+        d[v] = val.strip().encode()
     return d
 
 def var_renderings(d):
@@ -73,7 +73,7 @@ def files_with_content(rootdir):
             if f.startswith("scaffer_"):
                 continue
             dp = os.path.join(dirpath, f)
-            yield (dp, open(dp,"rb").read())
+            yield (dp.encode(), open(dp,"rb").read())
 
 def run_scaffer_init(pth, vars, prefilled, target_dir):
     """ Run scaffer_init.py.
