@@ -1,4 +1,5 @@
 from scaffer import emitter, scaffer
+import sys
 
 def test_binary():
     assert emitter.is_binary_content(b"hello\0")
@@ -15,3 +16,11 @@ def test_get_template_list():
     templates = set(n for (n,_) in scaffer.find_templates())
     musthave = set(["s1", "s2"])
     assert musthave.issubset(templates)
+
+def test_run_g_without_args():
+    sys.argv = ["scaffertest", "g"]
+    scaffer.main()
+
+def test_run_generate_template():
+    sys.argv = ["scaffertest", "g", "s2", "--dry"]
+    scaffer.main()
