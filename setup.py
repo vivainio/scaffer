@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='Scaffer',
-      version='0.8.0',
+      version='0.8.1',
       description="Scaffolding tool (code template emitter)",
       author='Ville M. Vainio',
       author_email='vivainio@gmail.com',

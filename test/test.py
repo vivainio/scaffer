@@ -1,10 +1,9 @@
-from __future__ import print_function
 import subprocess
 
 def run(c):
-    cmd = ["python","../scaffer"] + c
+    cmd = ["python","-m", "scaffer"] + c
     print(">",cmd)
-    subprocess.check_call(cmd)
+    subprocess.check_call(cmd, cwd="..", )
 
 run(["g", "s1", "-v", "bar=aa-bb", "prj=cc-dd",
     "spaced=Hello World", "-f", "--dry"])

@@ -13,7 +13,7 @@ def remember_cwd():
     finally: os.chdir(curdir)
 
 def is_binary_content(cont):
-    return '\0' in cont
+    return b'\0' in cont
 
 def discover_variables(cont):
     locase_spans = re.findall(r"scf[\.\-\_\:]?([a-z]+)", cont)
