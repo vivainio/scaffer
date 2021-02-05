@@ -6,14 +6,19 @@ import itertools
 from pprint import pprint
 import contextlib
 
+
 @contextlib.contextmanager
 def remember_cwd():
-    curdir= os.getcwd()
-    try: yield
-    finally: os.chdir(curdir)
+    curdir = os.getcwd()
+    try:
+        yield
+    finally:
+        os.chdir(curdir)
+
 
 def is_binary_content(cont):
-    return b'\0' in cont
+    return b"\0" in cont
+
 
 def discover_variables(cont):
     locase_spans = re.findall(rb"scf[\.\-\_\:]?([a-z]+)", cont)
@@ -29,26 +34,31 @@ def get_renderings(var_name: bytes, var_value: bytes):
         (b"scf." + var_name, b".".join(parts)),
         (b"scf-" + var_name, b"-".join(parts)),
         (b"scf_" + var_name, b"_".join(parts)),
-        #special verbatim syntax
+        # special verbatim syntax
         (b"scf:" + var_name, var_value),
         (b"Scf" + var_name.title(), b"".join(p.title() for p in parts)),
         (b"scf" + var_name, b"".join(parts)),
-        (b"SCF" + var_name.upper(), b"".join(parts).upper())
-
+        (b"SCF" + var_name.upper(), b"".join(parts).upper()),
     ]
 
 
 def apply_replacements(cont, replacements):
     if is_binary_content(cont):
         return cont
-    for (fr,to) in replacements:
+    for (fr, to) in replacements:
         cont = cont.replace(fr, to)
     return cont
 
+
 def rendered_content(template, replacements):
     return [
-        (apply_replacements(fname, replacements), apply_replacements(content, replacements)) for (fname, content) in template
+        (
+            apply_replacements(fname, replacements),
+            apply_replacements(content, replacements),
+        )
+        for (fname, content) in template
     ]
+
 
 def prompt_variables(vars):
     d = {}
@@ -59,9 +69,11 @@ def prompt_variables(vars):
         d[v] = val.strip().encode()
     return d
 
+
 def var_renderings(d):
-    r =  list(itertools.chain(*[get_renderings(k,v) for (k,v) in d.items()]))
+    r = list(itertools.chain(*[get_renderings(k, v) for (k, v) in d.items()]))
     return r
+
 
 def files_with_content(rootdir):
     """ -> (fname, content)[] """
@@ -73,23 +85,21 @@ def files_with_content(rootdir):
             if f.startswith("scaffer_"):
                 continue
             dp = os.path.join(dirpath, f)
-            yield (dp.encode(), open(dp,"rb").read())
+            yield (dp.encode(), open(dp, "rb").read())
+
 
 def run_scaffer_init(pth, vars, prefilled, target_dir):
-    """ Run scaffer_init.py.
+    """Run scaffer_init.py.
 
     This is run in target dir!
-     """
+    """
     print("Running", pth)
-    cont=  open(pth).read()
+    cont = open(pth).read()
     output_dict = {}
     ns = {
-        "scaffer_in": {
-            "vars": vars,
-            "prefilled": prefilled
-        },
+        "scaffer_in": {"vars": vars, "prefilled": prefilled},
         # the populated vars should end up here
-        "scaffer_out": output_dict
+        "scaffer_out": output_dict,
     }
     with remember_cwd():
         os.chdir(target_dir)
@@ -99,4 +109,3 @@ def run_scaffer_init(pth, vars, prefilled, target_dir):
         print("Variables from scaffer_init.py:")
         pprint(output_dict)
         prefilled.update(output_dict)
-
