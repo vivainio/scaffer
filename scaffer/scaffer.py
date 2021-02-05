@@ -13,15 +13,15 @@ def ensure_dir_for(pth):
         os.makedirs(dname)
 
 
-def emit_file(pth, cont, overwrite=False, dry=False):
+def emit_file(pth: bytes, cont, overwrite=False, dry=False):
     if dry:
-        print("- Would emit %s [%dB] " % (pth, len(cont)))
+        print(f"- Would emit {pth.decode()} [{len(cont)}]")
         return
-    print("- Emit", pth)
+    print(f"- Emit {pth.decode()}")
 
     ensure_dir_for(pth)
     if os.path.exists(pth) and not overwrite:
-        print("Can't overwrite '%s', use -f to force" % pth)
+        print("Can't overwrite '%s', use -f to force" % pth.decode())
         return
     open(pth, "wb").write(cont)
 
