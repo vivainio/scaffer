@@ -4,6 +4,7 @@ import sys
 import subprocess, shutil
 import os
 import textwrap
+from typing import List
 
 PACKAGE = "scaffer"
 
@@ -23,11 +24,26 @@ def do_test(args):
     c("pytest")
 
 
+def clean():
+    nuke(["dist", "sdist", "build"])
+
+
+def do_publish(args):
+    clean()
+    c("py setup.py sdist")
+
+
+
 def default():
     show_help()
 
 
 # library functions here (or in own module, whatever, I don't care)
+
+def nuke(dirs: List[str]):
+    for pth in dirs:
+        if os.path.isdir(pth):
+            shutil.rmtree(pth)
 
 
 def run_node_bin(scriptname: str, arg: str):
