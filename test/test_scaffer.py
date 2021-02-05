@@ -1,5 +1,10 @@
 from scaffer import emitter, scaffer
 import sys
+import pprint
+from pathlib import Path
+import os
+
+os.chdir(Path(__file__).absolute().parent)
 
 def test_binary():
     assert emitter.is_binary_content(b"hello\0")
@@ -13,7 +18,9 @@ def test_files_with_content():
         assert isinstance(c, bytes)
 
 def test_get_template_list():
-    templates = set(n for (n,_) in scaffer.find_templates())
+    found = list(scaffer.find_templates())
+    pprint.pprint(found)
+    templates = set(n for (n,_) in found)
     musthave = set(["s1", "s2"])
     assert musthave.issubset(templates)
 

@@ -20,8 +20,7 @@ def do_black(args):
 
 
 def do_test(args):
-    os.chdir("test")
-    c("pytest")
+    c("py -m pytest")
 
 
 def clean():

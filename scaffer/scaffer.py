@@ -83,7 +83,7 @@ def do_gen(arg):
         print("No template specified. Available templates:")
         maxlen = longest_string(t[0] for t in ts)
         for n, p in ts:
-            print("%s%s" % (n.ljust(maxlen + 2, b" "), p))
+            print("%s%s" % (n.ljust(maxlen + 2, " "), p))
         return
 
     if os.path.isdir(arg.template):

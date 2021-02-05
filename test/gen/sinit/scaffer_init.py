@@ -6,12 +6,12 @@ print(scaffer_out)
 
 def git_data():
     return {
-        "gitusername": os.popen("git config user.name").read().strip(),
-        "gitemail": os.popen("git config user.email").read().strip()
+        b"gitusername": os.popen("git config user.name").read().strip().encode(),
+        b"gitemail": os.popen("git config user.email").read().strip().encode()
     }
 
 d = git_data()
-d["targetdir"] = os.getcwd()
+d[b"targetdir"] = os.getcwd().encode()
 scaffer_out.update(d)
 
 
