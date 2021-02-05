@@ -26,8 +26,8 @@ def emit_file(pth, cont, overwrite=False, dry=False):
     open(pth, "wb").write(cont)
 
 
-def discover_files_in_parents(filenames, startdir):
-    cur = startdir
+def discover_files_in_parents(filenames, start_dir):
+    cur = start_dir
     while 1:
         for fname in os.listdir(cur):
             if fname in filenames:
@@ -83,7 +83,7 @@ def do_gen(arg):
         print("No template specified. Available templates:")
         maxlen = longest_string(t[0] for t in ts)
         for n, p in ts:
-            print("%s%s" % (n.ljust(maxlen + 2, " "), p))
+            print("%s%s" % (n.ljust(maxlen + 2, b" "), p))
         return
 
     if os.path.isdir(arg.template):
@@ -100,14 +100,14 @@ def do_gen(arg):
         prefilled_vars = {
             k.encode(): v.encode() for (k, v) in (a.split("=", 1) for a in arg.v)
         }
-        vars = emitter.discover_variables(all_content)
+        variables = emitter.discover_variables(all_content)
         if os.path.isfile("scaffer_init.py"):
-            emitter.run_scaffer_init(os.path.abspath("scaffer_init.py"), vars, prefilled_vars, tgt_dir)
+            emitter.run_scaffer_init(os.path.abspath("scaffer_init.py"), variables, prefilled_vars, tgt_dir)
 
-        unknown_prefilled = set(prefilled_vars.keys()).difference(vars)
+        unknown_prefilled = set(prefilled_vars.keys()).difference(variables)
         if unknown_prefilled:
             print("Warning! Unknown variables on command line:", ", ".join(unknown_prefilled))
-        to_fill = vars.difference(set(prefilled_vars.keys()))
+        to_fill = variables.difference(set(prefilled_vars.keys()))
         filled = emitter.prompt_variables(to_fill) if to_fill else {}
         filled.update(prefilled_vars)
         renderings = emitter.var_renderings(filled)
