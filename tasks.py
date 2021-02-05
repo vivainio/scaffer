@@ -31,6 +31,7 @@ def clean():
 def do_publish(args):
     clean()
     c("py setup.py sdist")
+    c("twine dist/*")
 
 
 
