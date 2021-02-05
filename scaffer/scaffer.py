@@ -68,7 +68,7 @@ def find_templates():
             for t in templates:
                 full = os.path.normpath(os.path.join(tdir, t))
                 if os.path.isdir(full):
-                    yield (t, full)
+                    yield t, full
 
 
 def longest_string(seq):

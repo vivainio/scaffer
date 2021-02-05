@@ -1,8 +1,8 @@
 """ Simple, fast and fun task runner, not unlike gulp / grunt (but fast, fun and zero dep)"""
-import json
-import sys
-import subprocess, shutil
 import os
+import shutil
+import subprocess
+import sys
 import textwrap
 from typing import List
 
@@ -32,7 +32,6 @@ def do_publish(args):
     clean()
     c("py setup.py sdist")
     c("twine upload dist/*")
-
 
 
 def default():
