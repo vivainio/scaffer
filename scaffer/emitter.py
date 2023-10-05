@@ -6,6 +6,8 @@ import itertools
 from pprint import pprint
 import contextlib
 
+from gitignore_parser import parse_gitignore
+
 
 @contextlib.contextmanager
 def remember_cwd():
@@ -45,7 +47,7 @@ def get_renderings(var_name: bytes, var_value: bytes):
 def apply_replacements(cont, replacements):
     if is_binary_content(cont):
         return cont
-    for (fr, to) in replacements:
+    for fr, to in replacements:
         cont = cont.replace(fr, to)
     return cont
 
@@ -76,14 +78,21 @@ def var_renderings(d):
 
 
 def files_with_content(rootdir):
-    """ -> (fname, content)[] """
+    """-> (fname, content)[]"""
+
+    if os.path.exists(".gitignore"):
+        matches = parse_gitignore(".gitignore")
+    else:
+        matches = lambda _: False
+
     for dirpath, _, fnames in os.walk(rootdir):
-        if ".git" in dirpath:
+        if ".git" in dirpath or matches(dirpath):
             continue
         for f in fnames:
             # reserved namespace
-            if f.startswith("scaffer_"):
+            if f.startswith("scaffer_") or matches(f):
                 continue
+
             dp = os.path.join(dirpath, f)
             yield (dp.encode(), open(dp, "rb").read())
 

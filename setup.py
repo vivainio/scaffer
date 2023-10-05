@@ -7,7 +7,7 @@ setup(name='Scaffer',
       author_email='vivainio@gmail.com',
       url='https://github.com/vivainio/scaffer',
       packages=['scaffer'],
-      install_requires=['argp'],
+      install_requires=['argp', 'gitignore-parser'],
       entry_points = {
         'console_scripts': [
             'scaffer = scaffer.scaffer:main'
