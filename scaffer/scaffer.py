@@ -89,6 +89,7 @@ def longest_string(seq):
 @contextmanager
 def _target_dir(target):
     if target.startswith("http://") or target.startswith("https://"):
+        print("Downloading template from", target)
         with tempfile.TemporaryDirectory() as temp_dir_name:
             response = requests.get(target)
             response.raise_for_status()
