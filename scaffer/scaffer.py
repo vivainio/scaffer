@@ -106,7 +106,10 @@ def do_gen(arg):
 
         unknown_prefilled = set(prefilled_vars.keys()).difference(variables)
         if unknown_prefilled:
-            print("Warning! Unknown variables on command line:", ", ".join(unknown_prefilled))
+            print(
+                "Warning! Unknown variables on command line:",
+                b", ".join(unknown_prefilled),
+            )
         to_fill = variables.difference(set(prefilled_vars.keys()))
         filled = emitter.prompt_variables(to_fill) if to_fill else {}
         filled.update(prefilled_vars)
