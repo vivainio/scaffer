@@ -77,7 +77,7 @@ def find_templates():
                 full = os.path.normpath(os.path.join(tdir, t))
                 if os.path.isdir(full):
                     yield t, full
-        urls = get_key_from_json(f, "urls") or {}
+        urls = get_key_from_json(f, "scaffer_template_urls") or {}
         for t, url in urls.items():
             yield t, url
 

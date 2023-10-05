@@ -3,7 +3,7 @@
         "gen",
         "gen2"
     ],
-    "urls": {
+    "scaffer_template_urls": {
         "url1": "http://localhost/1",
         "url2": "http://localhost/2"
     }
