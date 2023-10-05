@@ -13,7 +13,7 @@ def test_binary():
 def test_files_with_content():
     files = list(emitter.files_with_content("."))
     names = [t for (t, _) in files]
-    assert b".\\scaffer.json" in names
+    assert b".%sscaffer.json" % (os.sep.encode()) in names
     for c in [cont for (_,cont) in files]:
         assert isinstance(c, bytes)
 
