@@ -90,7 +90,7 @@ def files_with_content(rootdir):
             continue
         for f in fnames:
             # reserved namespace
-            if f.startswith("scaffer_") or matches(f):
+            if f.startswith("scaffer_") or f == ".gitignore" or matches(f):
                 continue
 
             dp = os.path.join(dirpath, f)
