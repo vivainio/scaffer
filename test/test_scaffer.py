@@ -3,6 +3,8 @@ import sys
 import pprint
 from pathlib import Path
 import os
+import io
+import zipfile
 
 os.chdir(Path(__file__).absolute().parent)
 
@@ -26,7 +28,7 @@ def test_get_template_list():
     found = list(scaffer.find_templates())
     pprint.pprint(found)
     templates = set(n for (n, _) in found)
-    musthave = set(["s1", "s2"])
+    musthave = set(["s1", "s2", "url1", "url2"])
     assert musthave.issubset(templates)
 
 
@@ -37,4 +39,13 @@ def test_run_g_without_args():
 
 def test_run_generate_template():
     sys.argv = ["scaffertest", "g", "s2", "--dry"]
+    scaffer.main()
+
+
+def test_run_generate_template_http(requests_mock):
+    zip_buffer = io.BytesIO()
+    with zipfile.ZipFile(zip_buffer, mode="w", compression=zipfile.ZIP_DEFLATED) as zf:
+        zf.writestr("dummy.txt", "dummy")
+    requests_mock.get("http://localhost/1", content=zip_buffer.getvalue())
+    sys.argv = ["scaffertest", "g", "url1", "--dry"]
     scaffer.main()
