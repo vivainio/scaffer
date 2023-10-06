@@ -3,6 +3,12 @@ import argp
 import json
 from . import emitter
 import functools
+from contextlib import contextmanager
+import tempfile
+import zipfile
+import io
+
+import requests
 
 RC_FILE = os.path.expanduser("~/.scaffer/scaffer.json")
 
@@ -48,7 +54,9 @@ def get_key_from_json(fname, key):
 
 
 def find_templates():
-    files = list(discover_files_in_parents(['package.json', 'scaffer.json'], os.getcwd()))
+    files = list(
+        discover_files_in_parents(["package.json", "scaffer.json"], os.getcwd())
+    )
     home_rc = os.path.expanduser("~/.scaffer/scaffer.json")
     if os.path.isfile(home_rc):
         files.append(home_rc)
@@ -69,14 +77,31 @@ def find_templates():
                 full = os.path.normpath(os.path.join(tdir, t))
                 if os.path.isdir(full):
                     yield t, full
+        urls = get_key_from_json(f, "scaffer_template_urls") or {}
+        for t, url in urls.items():
+            yield t, url
 
 
 def longest_string(seq):
     return functools.reduce(lambda current, s: max(current, len(s)), seq, 0)
 
 
+@contextmanager
+def _target_dir(target):
+    if target.startswith("http://") or target.startswith("https://"):
+        print("Downloading template from", target)
+        with tempfile.TemporaryDirectory() as temp_dir_name:
+            response = requests.get(target)
+            response.raise_for_status()
+            z = zipfile.ZipFile(io.BytesIO(response.content))
+            z.extractall(temp_dir_name)
+            yield temp_dir_name
+    else:
+        yield target
+
+
 def do_gen(arg):
-    """ Generate complex template """
+    """Generate complex template"""
     tgt_dir = os.getcwd().encode()
     ts = sorted(find_templates())
     if not arg.template:
@@ -93,29 +118,42 @@ def do_gen(arg):
     if not to_gen:
         print("ERROR: Template not found:", arg.template)
         return
-    for template in to_gen:
-        os.chdir(template[1])
-        content = list(emitter.files_with_content("."))
-        all_content = b"".join(t[0] + b"\n" + (b"" if emitter.is_binary_content(t[1]) else t[1]) for t in content)
-        prefilled_vars = {
-            k.encode(): v.encode() for (k, v) in (a.split("=", 1) for a in arg.v)
-        }
-        variables = emitter.discover_variables(all_content)
-        if os.path.isfile("scaffer_init.py"):
-            emitter.run_scaffer_init(os.path.abspath("scaffer_init.py"), variables, prefilled_vars, tgt_dir)
 
-        unknown_prefilled = set(prefilled_vars.keys()).difference(variables)
-        if unknown_prefilled:
-            print("Warning! Unknown variables on command line:", ", ".join(unknown_prefilled))
-        to_fill = variables.difference(set(prefilled_vars.keys()))
-        filled = emitter.prompt_variables(to_fill) if to_fill else {}
-        filled.update(prefilled_vars)
-        renderings = emitter.var_renderings(filled)
-        new_cont = emitter.rendered_content(content, renderings)
+    for _, target in to_gen:
+        with _target_dir(target) as target_dir:
+            os.chdir(target_dir)
+            content = list(emitter.files_with_content("."))
+            all_content = b"".join(
+                t[0] + b"\n" + (b"" if emitter.is_binary_content(t[1]) else t[1])
+                for t in content
+            )
+            prefilled_vars = {
+                k.encode(): v.encode() for (k, v) in (a.split("=", 1) for a in arg.v)
+            }
+            variables = emitter.discover_variables(all_content)
+            if os.path.isfile("scaffer_init.py"):
+                emitter.run_scaffer_init(
+                    os.path.abspath("scaffer_init.py"),
+                    variables,
+                    prefilled_vars,
+                    tgt_dir,
+                )
 
-        for fname, content in new_cont:
-            absname = os.path.normpath(os.path.join(tgt_dir, fname))
-            emit_file(absname, content, arg.f, arg.dry)
+            unknown_prefilled = set(prefilled_vars.keys()).difference(variables)
+            if unknown_prefilled:
+                print(
+                    "Warning! Unknown variables on command line:",
+                    b", ".join(unknown_prefilled),
+                )
+            to_fill = variables.difference(set(prefilled_vars.keys()))
+            filled = emitter.prompt_variables(to_fill) if to_fill else {}
+            filled.update(prefilled_vars)
+            renderings = emitter.var_renderings(filled)
+            new_cont = emitter.rendered_content(content, renderings)
+
+            for fname, content in new_cont:
+                absname = os.path.normpath(os.path.join(tgt_dir, fname))
+                emit_file(absname, content, arg.f, arg.dry)
 
 
 def read_rc():
@@ -130,7 +168,7 @@ def write_rc(d):
 
 
 def do_add(arg):
-    """ Add current directory to global templates directory """
+    """Add current directory to global templates directory"""
     old = read_rc()
     olddirs = old.get("scaffer", [])
     olddirs.append(os.getcwd())
@@ -143,12 +181,22 @@ def main():
 
     # g
     gen = argp.sub("g", do_gen, help="Generate code from named template")
-    gen.arg('-v', help="Give value to variable", nargs="+", default=[], metavar="variable=value")
-    gen.arg('-f', help="Overwrite files if needed", action="store_true")
+    gen.arg(
+        "-v",
+        help="Give value to variable",
+        nargs="+",
+        default=[],
+        metavar="variable=value",
+    )
+    gen.arg("-f", help="Overwrite files if needed", action="store_true")
     gen.arg("--dry", action="store_true", help="Dry run, do not create files")
     gen.arg("template", help="Template to generate", nargs="?")
 
-    argp.sub("add", do_add, help="Add current directory as template root in user global scaffer.json")
+    argp.sub(
+        "add",
+        do_add,
+        help="Add current directory as template root in user global scaffer.json",
+    )
     argp.parse()
 
 
