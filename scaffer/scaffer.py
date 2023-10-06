@@ -110,8 +110,9 @@ def do_gen(arg):
         for n, p in ts:
             print("%s%s" % (n.ljust(maxlen + 2, " "), p))
         return
-
-    if os.path.isdir(arg.template):
+    if arg.template.startswith("http://") or arg.template.startswith("https://"):
+        to_gen = [(None, arg.template)]
+    elif os.path.isdir(arg.template):
         to_gen = [(arg.template, arg.template)]
     else:
         to_gen = [t for t in ts if t[0] == arg.template]
