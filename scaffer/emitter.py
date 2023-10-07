@@ -5,6 +5,7 @@ import re
 import itertools
 from pprint import pprint
 import contextlib
+from pathlib import Path
 
 from gitignore_parser import parse_gitignore
 
@@ -86,15 +87,20 @@ def files_with_content(rootdir):
         matches = lambda _: False
 
     for dirpath, _, fnames in os.walk(rootdir):
-        if ".git" in dirpath or matches(dirpath):
+        if ".git" in dirpath or matches(Path(dirpath).resolve()):
             continue
         for f in fnames:
             # reserved namespace
-            if f.startswith("scaffer_") or f == ".gitignore" or matches(f):
+            if (
+                f.startswith("scaffer_")
+                or f == ".gitignore"
+                or matches(Path(f).resolve())
+            ):
                 continue
 
             dp = os.path.join(dirpath, f)
-            yield (dp.encode(), open(dp, "rb").read())
+            with open(dp, "rb") as dp_file:
+                yield (dp.encode(), dp_file.read())
 
 
 def run_scaffer_init(pth, vars, prefilled, target_dir):
