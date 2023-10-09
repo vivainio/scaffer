@@ -52,13 +52,24 @@ See https://github.com/vivainio/scaffer-templates for example templates.
 2. In project root, or any parent directory, put scaffer.json that points to directories that contain your templates:
 
 ```json
-
 {
     "scaffer": ["my/templates", "some/other/templates"]
 }
 
 ```
 
+You can also add ```scaffer_template_urls``` and configure templates to be downloaded via HTTP. In this
+case template must be a zip file which is automatically downloaded and extracted by Scaffer.
+
+```json
+{
+    "scaffer": ["my/templates", "some/other/templates"],
+    "scaffer_template_urls": {
+        "template_1": "http://localhost/1.zip",
+        "template_2": "http://localhost/2.zip"
+    }
+}
+```
 
 You can also put that "scaffer" key in your package.json if you don't want to pollute your tree with new files.
 
@@ -78,7 +89,7 @@ positional arguments:
   {barrel,gitignore,setup,g,add}
     barrel              Create index.tx for current directory
     gitignore           Create .gitignore file
-    g                   Generate code from named template
+    g                   Generate code from named or downloaded template
     add                 Add current directory as template root in user global
                         scaffer.json
 
@@ -87,7 +98,7 @@ usage: scaffer g [-h] [-v variable=value [variable=value ...]] [-f] [--dry]
                  [template]
 
 positional arguments:
-  template              Template to generate
+  template              Template to generate or a URL to template zip package
 
 optional arguments:
   -h, --help            show this help message and exit

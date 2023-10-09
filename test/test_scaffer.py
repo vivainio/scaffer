@@ -42,10 +42,23 @@ def test_run_generate_template():
     scaffer.main()
 
 
-def test_run_generate_template_http(requests_mock):
+def test_run_generate_named_template_http(requests_mock):
     zip_buffer = io.BytesIO()
     with zipfile.ZipFile(zip_buffer, mode="w", compression=zipfile.ZIP_DEFLATED) as zf:
         zf.writestr("dummy.txt", "dummy")
     requests_mock.get("http://localhost/1", content=zip_buffer.getvalue())
     sys.argv = ["scaffertest", "g", "url1", "--dry"]
     scaffer.main()
+
+
+def test_run_generate_template_http(requests_mock, fs):  # Requires pyfakefs fixture
+    zip_buffer = io.BytesIO()
+    with zipfile.ZipFile(zip_buffer, mode="w", compression=zipfile.ZIP_DEFLATED) as zf:
+        zf.writestr("dummy2.txt", "dummy")
+        zf.writestr("dummy2.excluded", "dummy")
+        zf.writestr(".gitignore", "dummy2.excluded")
+    requests_mock.get("http://localhost/1", content=zip_buffer.getvalue())
+    sys.argv = ["scaffertest", "g", "http://localhost/1"]
+    scaffer.main()
+    assert os.path.exists("dummy2.txt")
+    assert not os.path.exists("dummy2.excluded")

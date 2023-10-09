@@ -89,8 +89,9 @@ def longest_string(seq):
 @contextmanager
 def _target_dir(target):
     if target.startswith("http://") or target.startswith("https://"):
-        print("Downloading template from", target)
+        print("Downloading template from:", target)
         with tempfile.TemporaryDirectory() as temp_dir_name:
+            print("Temp directory:", temp_dir_name)
             response = requests.get(target)
             response.raise_for_status()
             z = zipfile.ZipFile(io.BytesIO(response.content))
@@ -110,8 +111,9 @@ def do_gen(arg):
         for n, p in ts:
             print("%s%s" % (n.ljust(maxlen + 2, " "), p))
         return
-
-    if os.path.isdir(arg.template):
+    if arg.template.startswith("http://") or arg.template.startswith("https://"):
+        to_gen = [(None, arg.template)]
+    elif os.path.isdir(arg.template):
         to_gen = [(arg.template, arg.template)]
     else:
         to_gen = [t for t in ts if t[0] == arg.template]
@@ -121,12 +123,14 @@ def do_gen(arg):
 
     for _, target in to_gen:
         with _target_dir(target) as target_dir:
+            old_dir = os.getcwd()
             os.chdir(target_dir)
             content = list(emitter.files_with_content("."))
             all_content = b"".join(
                 t[0] + b"\n" + (b"" if emitter.is_binary_content(t[1]) else t[1])
                 for t in content
             )
+            os.chdir(old_dir)
             prefilled_vars = {
                 k.encode(): v.encode() for (k, v) in (a.split("=", 1) for a in arg.v)
             }
