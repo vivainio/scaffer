@@ -24,9 +24,9 @@ def is_binary_content(cont):
 
 
 def discover_variables(cont):
-    locase_spans = re.findall(rb"scf[\.\-\_\:]?([a-z]+)", cont)
-    upcase_spans = list((u.lower() for u in re.findall(rb"SCF[\.\-\_]?([A-Z]+)", cont)))
-    pascalcase_spans = list((u.lower() for u in re.findall(rb"Scf([A-Z][a-z]+)", cont)))
+    locase_spans = re.findall(rb"\bscf[\.\-\_\:]?([a-z]+)\b", cont)
+    upcase_spans = list((u.lower() for u in re.findall(rb"\bSCF[\.\-\_]?([A-Z]+)\b", cont)))
+    pascalcase_spans = list((u.lower() for u in re.findall(rb"\bScf([A-Z][a-z]+)\b", cont)))
 
     return set(locase_spans + upcase_spans + pascalcase_spans)
 
