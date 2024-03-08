@@ -19,7 +19,9 @@ it will still compile and/or run. That way can modify and test templates natural
 
 If you want to have template variable 'myvar', represent it by one of these in the templates:
 
-ScfMyvar, scf-myvar, scf.myvar, scf_myvar, or uppercase equivalents.
+ScfMyvar, scf-myvar, scf.myvar, scf_myvar, or uppercase equivalents. It should appear at word boundary
+at least once to be discovered. E.g. fooscfoeoevaroeuoeuoeu would not be discovered or replaced, to avoid
+triggering the logic in random strings that may have "scf" characters.
 
 Example of file with all the supported templates, targeting variables "prj" and "bar":
 ```
