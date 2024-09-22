@@ -81,6 +81,13 @@ def var_renderings(d):
     r = list(itertools.chain(*[get_renderings(k, v) for (k, v) in d.items()]))
     return r
 
+BLACKLIST_DIRS = {".git", ".hg", ".svn", ".idea", ".vscode", "__pycache__", ".ruff_cache"}
+
+def path_is_blacklisted(pth):
+    for bl in BLACKLIST_DIRS:
+        if bl in pth:
+            return True
+    return False
 
 def files_with_content(rootdir):
     """-> (fname, content)[]"""
@@ -91,7 +98,10 @@ def files_with_content(rootdir):
         matches = lambda _: False
 
     for dirpath, _, fnames in os.walk(rootdir):
-        if ".git" in dirpath or matches(Path(dirpath).resolve()):
+        if path_is_blacklisted(dirpath):
+            continue
+
+        if matches(Path(dirpath).resolve()):
             continue
         for f in fnames:
             # reserved namespace
