@@ -9,15 +9,6 @@ from typing import List
 PACKAGE = "scaffer"
 
 
-def do_check(args):
-    """ typecheck, lint etc goes here """
-    c("mypy scaffer")
-
-
-def do_black(args):
-    """ do 'black' reformat of all code """
-    c("py -m black scaffer")
-
 
 def do_test(args):
     c("py -m pytest")
@@ -29,8 +20,8 @@ def clean():
 
 def do_publish(args):
     clean()
-    c("py setup.py sdist")
-    c("twine upload dist/*")
+    c("python -m build")
+    c("twine upload --repository scaffer dist/*")
 
 
 def default():
