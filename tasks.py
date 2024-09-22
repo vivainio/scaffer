@@ -1,4 +1,5 @@
-""" Simple, fast and fun task runner, not unlike gulp / grunt (but fast, fun and zero dep)"""
+"""Simple, fast and fun task runner, not unlike gulp / grunt (but fast, fun and zero dep)"""
+
 import os
 import shutil
 import subprocess
@@ -8,6 +9,9 @@ from typing import List
 
 PACKAGE = "scaffer"
 
+
+def do_format(args):
+    c("ruff format .")
 
 
 def do_test(args):
@@ -30,6 +34,7 @@ def default():
 
 # library functions here (or in own module, whatever, I don't care)
 
+
 def nuke(dirs: List[str]):
     for pth in dirs:
         if os.path.isdir(pth):
@@ -46,7 +51,7 @@ def c_spawn(cmd, cwd):
 
 
 def copy_files(sources, destinations):
-    """ copy each source to each destinatios """
+    """copy each source to each destinatios"""
     for src in sources:
         for dest in destinations:
             src = os.path.abspath(src)
@@ -87,7 +92,7 @@ def show_help():
 
 
 def main():
-    """ Launcher. Do not modify """
+    """Launcher. Do not modify"""
     if len(sys.argv) < 2:
         default()
         return
